@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+.font0 {
+    font-size: 0px;
+ }
+    html,body {
+      -ms-overflow-style: none; /* IE, Edge 対応 */
+      scrollbar-width: none; /* Firefox 対応 */
+    }
+    body::-webkit-scrollbar {
+      /* Chrome, Safari 対応 */
+      display: none;
+    }
