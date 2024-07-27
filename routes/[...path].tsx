@@ -4,6 +4,7 @@ import { FreshContext } from "$fresh/server.ts";
 import FileTree from "../islands/FileTree.tsx";
 import Markdown from 'preact-markdown';
 import { Page } from "../islands/Page.tsx";
+import { Partial } from "$fresh/runtime.ts";
 let routes: FileStructure | undefined;
 export const handler = {
   async GET(_req: Request, ctx: FreshContext) {
@@ -178,11 +179,13 @@ export default function Home({ data }: { data: { url: string, markdown: string }
             </div>
           </div>
           {/*content */}
+          <Partial name="body">
           <div class="w-full min-w-0 text-white h-screen overflow-y-hidden flex" id="md">
             <div class="lg:ml-[18rem] mt-4 min-w-0 flex w-full">
               <div class="w-2/3 lg:w-1/2 mx-auto"><div class="markdown-body" style={{backgroundColor :"#181818"}}><Page doc={data.markdown}/></div></div>
           </div>
           </div>
+          </Partial>
         </div>
       </div>
     </>
