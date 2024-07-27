@@ -2,9 +2,11 @@
 import { useSignal } from "@preact/signals";
 import { FreshContext } from "$fresh/server.ts";
 import FileTree from "../islands/FileTree.tsx";
-import Markdown from 'preact-markdown';
+import Markdown from "preact-markdown";
 import { Page } from "../islands/Page.tsx";
 import { Partial } from "$fresh/runtime.ts";
+import Hanger from "../islands/Button.tsx";
+import HangerContent from "../islands/HangerContent.tsx";
 let routes: FileStructure | undefined;
 export const handler = {
   async GET(_req: Request, ctx: FreshContext) {
@@ -121,16 +123,23 @@ function renderSidebar(routes: FileStructure | undefined, path = "") {
     </ul>
   );
 }
-export default function Home({ data }: { data: { url: string, markdown: string } }) {
+export default function Home(
+  { data }: { data: { url: string; markdown: string } },
+) {
+  const isShow = useSignal(false);
   return (
     <>
       <head>
         <script src="/a.js"></script>
-        <link rel="stylesheet" href="https://sindresorhus.com/github-markdown-css/github-markdown.css" />
+        <link
+          rel="stylesheet"
+          href="https://sindresorhus.com/github-markdown-css/github-markdown.css"
+        />
       </head>
       <div class="bg-[#ffffff] dark:bg-[#181818] text-black hidden-scrollbar">
         <header class="h-[56px] fixed w-full bg-[#efeff0] dark:bg-[#1f1f1f] flex">
-          <div class="w-1/3 h-full hidden lg:block">
+          <div class="w-1/3 h-full block">
+            <Hanger isShow={isShow}></Hanger>
           </div>
           <div class="m-auto flex gap-8">
             <a
@@ -152,21 +161,17 @@ export default function Home({ data }: { data: { url: string, markdown: string }
               takos
             </a>
           </div>
-          <div class="w-1/3 h-full hidden lg:block">
-            <div class="h-full flex justify-end items-center">
-              <div class="my-auto h-full pr-2 flex">
+          <div class="w-1/3 h-full block">
+            <div class="h-full flex justify-end items-center pt-1">
+              <div class="h-full flex pr-2 my-auto">
                 <a href="https://github.com/takoserver">
-                  <img src="/github.svg" alt="" class="h-3/6 my-auto" />
-                </a>
-              </div>
-              <div class="my-auto h-full pr-2 flex">
-                <a href="x.com/takoserver_com">
-                  <img src="/x.svg" alt="" class="h-3/6 my-auto" />
+                  <img src="/github.svg" alt="" class="h-4/6 m-auto" />
                 </a>
               </div>
             </div>
           </div>
         </header>
+        <HangerContent isShow={isShow} routes={routes}></HangerContent>
         <div class="pt-[56px] flex">
           {/*side bar */}
           <div class="flex-shrink-0 hidden lg:block lg:px-4">
@@ -180,18 +185,28 @@ export default function Home({ data }: { data: { url: string, markdown: string }
           </div>
           {/*content */}
           <Partial name="body">
-          <div class="w-full min-w-0 text-white h-screen overflow-y-hidden flex" id="md">
-            <div class="lg:ml-[18rem] mt-4 min-w-0 flex w-full">
-              <div class="w-2/3 lg:w-1/2 mx-auto"><div class="markdown-body" style={{backgroundColor :"#181818"}}><Page doc={data.markdown}/></div></div>
-          </div>
-          </div>
+            <div
+              class="w-full min-w-0 text-white h-screen overflow-y-hidden flex"
+              id="md"
+            >
+              <div class="lg:ml-[18rem] mt-4 min-w-0 flex w-full">
+                <div class="w-2/3 lg:w-1/2 mx-auto">
+                  <div
+                    class="markdown-body"
+                    style={{ backgroundColor: "#181818" }}
+                  >
+                    <Page doc={data.markdown} />
+                  </div>
+                </div>
+              </div>
+            </div>
           </Partial>
         </div>
       </div>
     </>
   );
 }
-import MarkdownIt from 'markdown-it';
+import MarkdownIt from "markdown-it";
 
 const md = new MarkdownIt();
 
@@ -202,7 +217,5 @@ export function parseMarkdown(markdown: string) {
 const MarkdownRenderer = ({ content }: { content: string }) => {
   const htmlContent = parseMarkdown(content);
 
-  return (
-    <div dangerouslySetInnerHTML={{ __html: htmlContent }} />
-  );
+  return <div dangerouslySetInnerHTML={{ __html: htmlContent }} />;
 };

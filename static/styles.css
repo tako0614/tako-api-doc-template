@@ -16,7 +16,12 @@
   list-style-type: none;
   padding-left: 10px;
 }
-
+@media screen and (max-width: 768px) {
+  .file-tree ul {
+    padding-left: 5px;
+  }
+  
+}
 .folder,
 .file {
   cursor: pointer;
@@ -30,5 +35,20 @@
 }
 
 .folder.open:before {
+  content: "▼";
+}
+.folder2,
+.file2 {
+  cursor: pointer;
+  @apply text-white
+}
+
+.folder2:before {
+  content: "▶";
+  display: inline-block;
+  margin-right: 6px;
+}
+
+.folder2.open:before {
   content: "▼";
 }
