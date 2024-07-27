@@ -11,4 +11,24 @@
     body::-webkit-scrollbar {
       /* Chrome, Safari 対応 */
       display: none;
-    }
+}
+.file-tree ul {
+  list-style-type: none;
+  padding-left: 10px;
+}
+
+.folder,
+.file {
+  cursor: pointer;
+  @apply text-white
+}
+
+.folder:before {
+  content: "▶";
+  display: inline-block;
+  margin-right: 6px;
+}
+
+.folder.open:before {
+  content: "▼";
+}
