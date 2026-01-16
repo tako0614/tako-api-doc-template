@@ -8,10 +8,9 @@ import * as $_app from "./routes/_app.tsx";
 import * as $api_joke from "./routes/api/joke.ts";
 import * as $greet_name_ from "./routes/greet/[name].tsx";
 import * as $index from "./routes/index.tsx";
-import * as $Button from "./islands/Button.tsx";
-import * as $FileTree from "./islands/FileTree.tsx";
 import * as $Hanger from "./islands/Hanger.tsx";
 import * as $HangerContent from "./islands/HangerContent.tsx";
+import * as $MobileMenuToggle from "./islands/MobileMenuToggle.tsx";
 import * as $Page from "./islands/Page.tsx";
 import { type Manifest } from "$fresh/server.ts";
 
@@ -25,10 +24,9 @@ const manifest = {
     "./routes/index.tsx": $index,
   },
   islands: {
-    "./islands/Button.tsx": $Button,
-    "./islands/FileTree.tsx": $FileTree,
     "./islands/Hanger.tsx": $Hanger,
     "./islands/HangerContent.tsx": $HangerContent,
+    "./islands/MobileMenuToggle.tsx": $MobileMenuToggle,
     "./islands/Page.tsx": $Page,
   },
   baseUrl: import.meta.url,

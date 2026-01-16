@@ -1,138 +1,23 @@
-// deno-lint-ignore-file
-import { useSignal } from "@preact/signals";
 import { FreshContext } from "$fresh/server.ts";
-import FileTree from "../islands/FileTree.tsx";
-import Markdown from "preact-markdown";
 import { Page } from "../islands/Page.tsx";
 import { Partial } from "$fresh/runtime.ts";
-let routes: FileStructure | undefined;
+import { getRoutes } from "../lib/fileStructure.ts";
+import { renderSidebar } from "../lib/sidebar.tsx";
+
 export const handler = {
   async GET(_req: Request, ctx: FreshContext) {
-    if (!routes) {
-      routes = await getDirectoryStructure("./markdowns");
-    }
+    const routes = await getRoutes();
     const markdown = await Deno.readTextFile("./markdowns/Welcome.md");
-    return ctx.render({ url: "", markdown });
+    return ctx.render({ markdown, routes });
   },
 };
-type FileStructure = {
-  files: string[];
-  [directory: string]: FileStructure | string[];
-};
 
-// function to get directory structure
-async function getDirectoryStructure(path: string): Promise<FileStructure> {
-  const structure: FileStructure = { files: [] };
-
-  for await (const entry of Deno.readDir(path)) {
-    if (entry.isFile) {
-      structure.files.push(entry.name.split(".").slice(0, -1).join("."));
-    } else if (entry.isDirectory) {
-      structure[entry.name] = await getDirectoryStructure(
-        `${path}/${entry.name}`,
-      );
-    }
-  }
-
-  return structure;
-}
-
-// 型定義
-// ファイルタイトルコンポーネント
-const FileTitle = ({ href, children }: { href: string; children: any }) => (
-  <li>
-    <a href={href} className="file">
-      {children}
-    </a>
-  </li>
-);
-
-// ディレクトリタイトルコンポーネント
-const DirTitle = ({ children }: { children: any }) => (
-  <span className="folder2">
-    {children}
-  </span>
-);
-const FileTitle2 = ({ href, children }: { href: string; children: any }) => (
-  <li>
-    <a href={href} className="file">
-      {children}
-    </a>
-  </li>
-);
-
-// ディレクトリタイトルコンポーネント
-const DirTitle2 = ({ children }: { children: any }) => (
-  <span className="folder2">
-    {children}
-  </span>
-);
-// サイドバーをレンダリングする関数
-function renderSidebar(routes: FileStructure | undefined, path = "") {
-  if (!routes) {
-    return null;
-  }
-
-  const entries = Object.entries(routes);
-
-  return (
-    <ul>
-      {entries.map(([key, value]) => {
-        if (key === "files" && Array.isArray(value)) {
-          return value.map((file) => (
-            <FileTitle key={file} href={`${path}${file}`}>
-              {file}
-            </FileTitle>
-          ));
-        } else {
-          const isOpen = useSignal(false);
-          return (
-            <li key={key}>
-              <DirTitle>{key}</DirTitle>
-              {renderSidebar(value as FileStructure, `${path}${key}/`)}
-            </li>
-          );
-        }
-      })}
-    </ul>
-  );
-}
-function renderSidebar2(routes: FileStructure | undefined, path = "") {
-  if (!routes) {
-    return null;
-  }
-
-  const entries = Object.entries(routes);
-
-  return (
-    <ul>
-      {entries.map(([key, value]) => {
-        if (key === "files" && Array.isArray(value)) {
-          return value.map((file) => (
-            <FileTitle2 key={file} href={`${path}${file}`}>
-              {file}
-            </FileTitle2>
-          ));
-        } else {
-          const isOpen = useSignal(false);
-          return (
-            <li key={key}>
-              <DirTitle2>{key}</DirTitle2>
-              {renderSidebar(value as FileStructure, `${path}${key}/`)}
-            </li>
-          );
-        }
-      })}
-    </ul>
-  );
-}
 export default function Home(
-  { data }: { data: { url: string; markdown: string } },
+  { data }: { data: { markdown: string; routes: unknown } },
 ) {
   return (
     <>
       <head>
-        <script src="/a.js"></script>
         <link
           rel="stylesheet"
           href="https://sindresorhus.com/github-markdown-css/github-markdown.css"
@@ -140,8 +25,7 @@ export default function Home(
       </head>
       <div class="bg-[#181818] text-black hidden-scrollbar">
         <header class="h-[56px] fixed w-full bg-[#efeff0] dark:bg-[#1f1f1f] flex">
-          <div class="w-1/3 h-full hidden lg:block">
-          </div>
+          <div class="w-1/3 h-full hidden lg:block"></div>
           <div class="m-auto flex gap-8">
             <a
               href="/"
@@ -166,19 +50,18 @@ export default function Home(
             <div class="h-full flex justify-end items-center">
               <div class="my-auto h-full pr-2 flex">
                 <a href="https://github.com/takoserver">
-                  <img src="/github.svg" alt="" class="h-3/6 my-auto" />
+                  <img src="/github.svg" alt="" class="h-3/6 my-auto" loading="lazy" />
                 </a>
               </div>
               <div class="my-auto h-full pr-2 flex">
                 <a href="x.com/takoserver_com">
-                  <img src="/x.svg" alt="" class="h-3/6 my-auto" />
+                  <img src="/x.svg" alt="" class="h-3/6 my-auto" loading="lazy" />
                 </a>
               </div>
             </div>
           </div>
         </header>
         <div class="pt-[56px] flex">
-          {/*side bar */}
           <div class="flex-shrink-0 hidden lg:block lg:px-4">
             <div class="fixed top-24 bottom-24 w-[17rem] flex overflow-hidden dark:bg-[#242424] rounded-xl">
               <div class="flex-1 h-[calc(100vh_-_6rem)] overflow-y-auto pb-8 p-2">
@@ -186,12 +69,11 @@ export default function Home(
                   <div class="text-white text-bold text-lg text-center">
                     takos api v2 docs
                   </div>
-                  {renderSidebar(routes, "/")}
+                  {renderSidebar(data.routes, "/")}
                 </ul>
               </div>
             </div>
           </div>
-          {/*content */}
           <Partial name="body">
             <div
               class="w-full min-w-0 text-white h-screen overflow-y-hidden flex"

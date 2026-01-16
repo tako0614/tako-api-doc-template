@@ -1,31 +1,32 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-.font0 {
-    font-size: 0px;
- }
-    html,body {
-      -ms-overflow-style: none; /* IE, Edge 対応 */
-      scrollbar-width: none; /* Firefox 対応 */
-    }
-    body::-webkit-scrollbar {
-      /* Chrome, Safari 対応 */
-      display: none;
+
+html,
+body {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
+
+body::-webkit-scrollbar {
+  display: none;
+}
+
 .file-tree ul {
   list-style-type: none;
   padding-left: 10px;
 }
+
 @media screen and (max-width: 768px) {
   .file-tree ul {
     padding-left: 5px;
   }
-  
 }
+
 .folder,
 .file {
   cursor: pointer;
-  @apply text-white
+  @apply text-white;
 }
 
 .folder:before {
@@ -35,20 +36,5 @@
 }
 
 .folder.open:before {
-  content: "▼";
-}
-.folder2,
-.file2 {
-  cursor: pointer;
-  @apply text-white
-}
-
-.folder2:before {
-  content: "▶";
-  display: inline-block;
-  margin-right: 6px;
-}
-
-.folder2.open:before {
   content: "▼";
 }
